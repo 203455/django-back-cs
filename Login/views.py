@@ -1,7 +1,4 @@
-from lib2to3.pgen2 import token
-from venv import create
-from django.shortcuts import render
-from django.template import context
+
 
 #recursos de rest_framework
 from rest_framework.authtoken.views import ObtainAuthToken
