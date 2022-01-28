@@ -23,7 +23,7 @@ router.register(r'users', UserViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     re_path(r'^api/v1/login', include('Login.urls')),
-    re_path(r'^api/v1/register/', include('Register.urls')),
     re_path(r'^api/v1/primer_componente/', include('primerComponente.urls')),
+    re_path(r'^api/v1/register/', include('Register.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
