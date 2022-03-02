@@ -1,19 +1,23 @@
 from django.shortcuts import render
 #importación de elementos de rest_framework
-from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
 #importacion de serializer
-from Register.serializers import RegisterUser
+from django.contrib.auth.models import User
+from .serializers import RegisterSerializer
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
 
 # Create your views here.
-class UserApi(APIView):
-    def post(self, request):
+class UserApi(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = RegisterSerializer
+    """ def post(self, request):
         serializer = RegisterUser(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) """
         
         
