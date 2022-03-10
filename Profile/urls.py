@@ -5,8 +5,10 @@ from django.conf.urls import include
 #importamos view
 from Profile.views import LoadProfileTable
 from Profile.views import LoadProfileTableDetail
+from Profile.views import LoadUserDetails
 
 urlpatterns = [
     re_path(r'^imagenes/$', LoadProfileTable.as_view()),
     re_path(r'^imagenes/(?P<pk>\d+)$', LoadProfileTableDetail.as_view()),
+    re_path(r'^user/(?P<pk>\d+)$', LoadUserDetails.as_view()),
 ]

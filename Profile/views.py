@@ -1,4 +1,5 @@
 from asyncio import exceptions
+from urllib import response
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,6 +8,7 @@ import os.path
 
 #Importaciones de modelos
 from Profile.models import ProfileTable
+from django.contrib.auth.models import User
 
 #Importacion de serializers
 from Profile.serializers import ProfileTableSerializers
@@ -63,6 +65,7 @@ class LoadProfileTableDetail(APIView):
         idResponse = self.get_object(pk)
         if 'image' not in request.data:
             raise exceptions.ParseError("No se ha seleccionado un archivo")
+        idResponse.image.delete()
         archivos = request.data['image']
         urlT=os.path.splitext(archivos.name)
         url=''.join(urlT)
@@ -82,3 +85,32 @@ class LoadProfileTableDetail(APIView):
             idResponse.delete()
             return Response(self.response_custom("Succes","Eliminado", status=status.HTTP_204_NO_CONTENT))
         return Response(self.response_custom("Error", "Dato no encontrado",status = status.HTTP_400_BAD_REQUEST))
+    
+class LoadUserDetails(APIView):
+    
+    def rest_costum(self,user,status):
+        response = {
+            "first_name": user[0]['first_name'],
+            "last_name": user[0]['last_name'],
+            "username": user[0]['username'],
+            "email": user[0]['email'],
+            "status": status
+        }
+        return response
+    
+    def get(self, request, pk, format=None):
+        idresponse= User.objects.filter(id=pk).values()
+        if(idresponse!=404):
+            responseData= self.rest_costum(idresponse,status.HTTP_200_OK)
+            return Response(responseData)
+        return "No se encontró el usuario"
+    
+    def put(self, request, pk, format=None):
+        data=request.data
+        user = User.objects.filter(id=pk)
+        user.update(username=data.get('username'))
+        user.update(first_name=data.get('first_name'))
+        user.update(last_name=data.get('last_name'))
+        user.update(email=data.get('email'))
+        responseUser=User.objects.filter(id=pk).values()
+        return Response(self.rest_costum(responseUser,status.HTTP_200_OK))
