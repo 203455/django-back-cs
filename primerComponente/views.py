@@ -1,4 +1,5 @@
 
+from urllib import response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -16,15 +17,15 @@ import json
 
 class PrimerTablaList(APIView):
     def response_custom(self, messages, pay_load, status):
-        responseOk={"messages":messages, "pay_load":pay_load, "status": status}
-        return responseOk
+        response_ok={"messages":messages, "pay_load":pay_load, "status": status}
+        return response_ok
         
     
     def get(self, request, format=None):
         queryset=PrimerTabla.objects.all()
         serializer=PrimerTablaSerializer(queryset,many=True, context={'request':request})
-        responseOk=self.response_custom("Succes", serializer.data, status=status.HTTP_200_OK)
-        return Response(responseOk)
+        response_ok=self.response_custom("Succes", serializer.data, status=status.HTTP_200_OK)
+        return Response(response_ok)
     
     def post(self, request, format=None):
         serializer=PrimerTablaSerializer(data=request.data)
@@ -46,15 +47,15 @@ class PrimerTablaDetails(APIView):
             return 0
         
     def get(self, request, pk , format=None):
-        idResponse = self.get_object(pk)
-        if idResponse != 0:
-            idResponse = PrimerTablaSerializer(idResponse)
-            return Response(idResponse.data, status=status.HTTP_200_OK)
+        id_response = self.get_object(pk)
+        if id_response != 0:
+            id_response = PrimerTablaSerializer(id_response)
+            return Response(id_response.data, status=status.HTTP_200_OK)
         return Response('No hay datos', status=status.HTTP_400_BAD_REQUEST)
     
     def put(self, request, pk , format=None):
-        idResponse = self.get_object(pk)
-        serializer=PrimerTablaSerializer(idResponse,data=request.data)
+        id_response = self.get_object(pk)
+        serializer=PrimerTablaSerializer(id_response,data=request.data)
         if serializer.is_valid():
             serializer.save()
             datas = serializer.data
@@ -63,8 +64,8 @@ class PrimerTablaDetails(APIView):
     
     
     def delete(self, request, pk , format=None):
-        idResponse = self.get_object(pk)
-        if idResponse != 0:
-            idResponse.delete()
+        id_response = self.get_object(pk)
+        if id_response != 0:
+            id_response.delete()
             return Response(self.response_custom("Succes", "Dato Eliminado", status=status.HTTP_201_CREATED))
         return Response(self.response_custom("Error", "Dato No Encontrado", status=status.HTTP_400_BAD_REQUEST))

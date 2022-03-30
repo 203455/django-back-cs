@@ -13,22 +13,22 @@ from loadImage.serializers import ImageTableSerializers
 
 class LoadImageTable(APIView):
     def response_custom(self, messages, pay_load, status):
-        responseOk={"messages":messages, "pay_load":pay_load, "status": status}
-        return responseOk
+        response_ok={"messages":messages, "pay_load":pay_load, "status": status}
+        return response_ok
     
     def get(self, request, format=None):
         queryset = ImageTable.objects.all()
         serializer = ImageTableSerializers(queryset, many = True, context = {'request':request})
-        responseOk = self.response_custom("Succes", serializer.data, status=status.HTTP_200_OK)
-        return Response(responseOk)
+        response_ok = self.response_custom("Succes", serializer.data, status=status.HTTP_200_OK)
+        return Response(response_ok)
     
     def post(self, request):
         if 'image' not in request.data:
             raise exceptions.ParseError("No se ha seleccionado un archivo")
         archivos = request.data['image']
         name, formato = os.path.splitext(archivos.name)
-        urlT=os.path.splitext(archivos.name)
-        url=''.join(urlT)
+        url_text=os.path.splitext(archivos.name)
+        url=''.join(url_text)
         url='http://localhost:8000/media/img/'+url
         request.data['name_img'] = name
         request.data['format_img'] = formato
@@ -45,8 +45,8 @@ class LoadImageTable(APIView):
 
 class LoadImageTableDetail(APIView):
     def response_custom(self, messages, pay_load, status):
-        responseOk={"messages":messages, "pay_load":pay_load, "status": status}
-        return responseOk
+        response_ok={"messages":messages, "pay_load":pay_load, "status": status}
+        return response_ok
     
     def get_object(self, pk):
         try:
@@ -55,26 +55,26 @@ class LoadImageTableDetail(APIView):
             return 0
 
     def get(self, request,pk, format=None):
-        idResponse = self.get_object(pk)
-        if idResponse != 0:
-            idResponse = ImageTableSerializers(idResponse)
-            return Response(self.response_custom("Succes", idResponse.data , status=status.HTTP_200_OK))
+        id_response = self.get_object(pk)
+        if id_response != 0:
+            id_response = ImageTableSerializers(id_response)
+            return Response(self.response_custom("Succes", id_response.data , status=status.HTTP_200_OK))
         return Response(self.response_custom("Error", "No hay datos", status = status.HTTP_400_BAD_REQUEST))
     
     
     def put(self, request,pk, format=None):
-        idResponse = self.get_object(pk)
+        id_response = self.get_object(pk)
         if 'image' not in request.data:
             raise exceptions.ParseError("No se ha seleccionado un archivo")
         archivos = request.data['image']
         name, formato = os.path.splitext(archivos.name)
-        urlT=os.path.splitext(archivos.name)
-        url=''.join(urlT)
+        url_text=os.path.splitext(archivos.name)
+        url=''.join(url_text)
         url='http://localhost:8000/media/img/'+url
         request.data['name_img'] = name
         request.data['format_img'] = formato
         request.data['url_img'] = url
-        serializer = ImageTableSerializers(idResponse, data=request.data)   
+        serializer = ImageTableSerializers(id_response, data=request.data)   
         if serializer.is_valid():
             serializer.save()
             datas = serializer.data
@@ -82,9 +82,9 @@ class LoadImageTableDetail(APIView):
         return Response(self.response_custom("Error", serializer.errors,status = status.HTTP_400_BAD_REQUEST))
 
     def delete(self, request, pk):
-        idResponse = self.get_object(pk)
-        if idResponse != 0:
-            idResponse.image.delete()
-            idResponse.delete()
+        id_response = self.get_object(pk)
+        if id_response!= 0:
+            id_response.image.delete()
+            id_response.delete()
             return Response(self.response_custom("Succes","Eliminado", status=status.HTTP_204_NO_CONTENT))
         return Response(self.response_custom("Error", "Dato no encontrado",status = status.HTTP_400_BAD_REQUEST))

@@ -15,21 +15,21 @@ from Profile.serializers import ProfileTableSerializers
 
 class LoadProfileTable(APIView):
     def response_custom(self, messages, pay_load, status):
-        responseOk={"messages":messages, "pay_load":pay_load, "status": status}
-        return responseOk
+        response_ok={"messages":messages, "pay_load":pay_load, "status": status}
+        return response_ok
     
     def get(self, request, format=None):
         queryset = ProfileTable.objects.all()
         serializer = ProfileTableSerializers(queryset, many = True, context = {'request':request})
-        responseOk = self.response_custom("Succes", serializer.data, status=status.HTTP_200_OK)
-        return Response(responseOk)
+        response_ok = self.response_custom("Succes", serializer.data, status=status.HTTP_200_OK)
+        return Response(response_ok)
     
     def post(self, request):
         if 'image' not in request.data:
             raise exceptions.ParseError("No se ha seleccionado un archivo")
         archivos = request.data['image']
-        urlT=os.path.splitext(archivos.name)
-        url=''.join(urlT)
+        url_text=os.path.splitext(archivos.name)
+        url=''.join(url_text)
         url='http://localhost:8000/media/img/'+url
         request.data['url_img'] = url
         serializer = ProfileTableSerializers(data=request.data)   
@@ -44,8 +44,8 @@ class LoadProfileTable(APIView):
 
 class LoadProfileTableDetail(APIView):
     def response_custom(self, messages, pay_load, status):
-        responseOk={"messages":messages, "pay_load":pay_load, "status": status}
-        return responseOk
+        response_ok={"messages":messages, "pay_load":pay_load, "status": status}
+        return response_ok
     
     def get_object(self, pk):
         try:
@@ -54,24 +54,24 @@ class LoadProfileTableDetail(APIView):
             return 0
 
     def get(self, request,pk, format=None):
-        idResponse = self.get_object(pk)
-        if idResponse != 0:
-            idResponse = ProfileTableSerializers(idResponse)
-            return Response(self.response_custom("Succes", idResponse.data , status=status.HTTP_200_OK))
+        id_response = self.get_object(pk)
+        if id_response != 0:
+            id_response = ProfileTableSerializers(id_response)
+            return Response(self.response_custom("Succes", id_response.data , status=status.HTTP_200_OK))
         return Response(self.response_custom("Error", "No hay datos", status = status.HTTP_400_BAD_REQUEST))
     
     
     def put(self, request,pk, format=None):
-        idResponse = self.get_object(pk)
+        id_response = self.get_object(pk)
         if 'image' not in request.data:
             raise exceptions.ParseError("No se ha seleccionado un archivo")
-        idResponse.image.delete()
+        id_response.image.delete()
         archivos = request.data['image']
-        urlT=os.path.splitext(archivos.name)
-        url=''.join(urlT)
+        url_text=os.path.splitext(archivos.name)
+        url=''.join(url_text)
         url='http://localhost:8000/media/img/'+url
         request.data['url_img'] = url
-        serializer = ProfileTableSerializers(idResponse, data=request.data)   
+        serializer = ProfileTableSerializers(id_response, data=request.data)   
         if serializer.is_valid():
             serializer.save()
             datas = serializer.data
@@ -79,10 +79,10 @@ class LoadProfileTableDetail(APIView):
         return Response(self.response_custom("Error", serializer.errors,status = status.HTTP_400_BAD_REQUEST))
 
     def delete(self, request, pk):
-        idResponse = self.get_object(pk)
-        if idResponse != 0:
-            idResponse.image.delete()
-            idResponse.delete()
+        id_response = self.get_object(pk)
+        if id_response != 0:
+            id_response.image.delete()
+            id_response.delete()
             return Response(self.response_custom("Succes","Eliminado", status=status.HTTP_204_NO_CONTENT))
         return Response(self.response_custom("Error", "Dato no encontrado",status = status.HTTP_400_BAD_REQUEST))
     
@@ -101,8 +101,8 @@ class LoadUserDetails(APIView):
     def get(self, request, pk, format=None):
         idresponse= User.objects.filter(id=pk).values()
         if(idresponse!=404):
-            responseData= self.rest_costum(idresponse,status.HTTP_200_OK)
-            return Response(responseData)
+            response_data= self.rest_costum(idresponse,status.HTTP_200_OK)
+            return Response(response_data)
         return "No se encontró el usuario"
     
     def put(self, request, pk, format=None):
@@ -112,5 +112,5 @@ class LoadUserDetails(APIView):
         user.update(first_name=data.get('first_name'))
         user.update(last_name=data.get('last_name'))
         user.update(email=data.get('email'))
-        responseUser=User.objects.filter(id=pk).values()
-        return Response(self.rest_costum(responseUser,status.HTTP_200_OK))
+        response_user=User.objects.filter(id=pk).values()
+        return Response(self.rest_costum(response_user,status.HTTP_200_OK))
